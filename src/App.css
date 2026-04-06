@@ -1,0 +1,50 @@
+.submission-page {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submission-card {
+  max-width: 640px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.submission-eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #10b981;
+}
+
+.submission-card h1 {
+  margin: 0 0 12px;
+  font-size: 2rem;
+}
+
+.submission-card h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.submission-block + .submission-block {
+  margin-top: 24px;
+}
+
+.submission-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.submission-card ul {
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+
+.submission-card li + li {
+  margin-top: 8px;
+}
