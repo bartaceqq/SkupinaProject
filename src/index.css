@@ -2,11 +2,32 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+:root {
+  color-scheme: light;
+  font-family: "Aptos", "Segoe UI Variable", "Trebuchet MS", sans-serif;
   background: #f5f7fa;
   color: #0f172a;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fa;
+  color: #0f172a;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
 }
 
 #root {
