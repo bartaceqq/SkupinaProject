@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 function StatusMessage({ children, variant = 'neutral' }) {
   return (
     <p
@@ -6,6 +7,16 @@ function StatusMessage({ children, variant = 'neutral' }) {
     >
       <span className="status-message__dot" aria-hidden="true" />
       <span>{children}</span>
+=======
+function StatusMessage({ message }) {
+  if (!message?.text) {
+    return null
+  }
+
+  return (
+    <p className={`status-message status-message--${message.tone || 'info'}`}>
+      {message.text}
+>>>>>>> Stashed changes
     </p>
   )
 }
