@@ -1,14 +1,34 @@
-* {
+:root {
+  --color-primary: #10b981;
+  --color-background: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-loading: #3b82f6;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-border: #cbd5e1;
+  --color-text-light: #64748b;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  color: #0f172a;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+button {
+  cursor: pointer;
 }
 
 #root {
   min-height: 100vh;
+  padding: 0 16px;
 }
