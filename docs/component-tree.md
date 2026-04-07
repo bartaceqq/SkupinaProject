@@ -4,6 +4,11 @@ Actual component structure used by the app.
 
 ```txt
 src/
+  hooks/
+    useConverterApp.js
+    useCurrencyRates.js
+    useFetch.js
+    useLocalStorage.js
   components/
     layout/
       AppLayout.jsx

@@ -41,3 +41,17 @@ export interface HistoryItem {
   result: ConversionResult;
   createdAt: string;
 }
+
+export interface CurrencyRates {
+  base: UnitId;
+  date: string;
+  rates: Record<UnitId, number>;
+  source: string;
+}
+
+export interface ConverterDraft {
+  category: CategoryId;
+  amount: string;
+  fromUnitId: UnitId;
+  toUnitId: UnitId;
+}
