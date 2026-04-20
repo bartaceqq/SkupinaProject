@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="icon-title">
+  <title id="icon-title">All Unit Converter icon</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <rect x="84" y="84" width="344" height="344" rx="84" fill="rgba(255,255,255,0.12)" />
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="28">
+    <path d="M154 194h176" />
+    <path d="m280 144 50 50-50 50" />
+    <path d="M358 318H182" />
+    <path d="m232 268-50 50 50 50" />
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 function normalizeError(error) {
   if (error instanceof Error) {
@@ -24,9 +24,10 @@ export function useFetch(
 
   const fetcherRef = useRef(fetcher)
   const requestIdRef = useRef(0)
+  const dependencyKey = JSON.stringify(dependencies)
   fetcherRef.current = fetcher
 
-  const refresh = async ({ silent = false } = {}) => {
+  const refresh = useCallback(async ({ silent = false } = {}) => {
     if (!enabled) {
       return null
     }
@@ -62,7 +63,7 @@ export function useFetch(
         setLoading(false)
       }
     }
-  }
+  }, [enabled])
 
   useEffect(() => {
     if (!enabled) {
@@ -85,7 +86,7 @@ export function useFetch(
         window.clearInterval(intervalId)
       }
     }
-  }, [enabled, refreshIntervalMs, ...dependencies])
+  }, [dependencyKey, enabled, refresh, refreshIntervalMs])
 
   return {
     data,

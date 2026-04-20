@@ -19,12 +19,9 @@ export function formatConversionSummary(
   result: ConversionResult,
   locale = "cs-CZ",
 ): string {
-  const fromUnit = getUnitById(result.fromUnit);
-  const toUnit = getUnitById(result.toUnit);
-
-  return `${formatNumber(result.input, locale)} ${
-    fromUnit?.symbol || result.fromUnit
-  } = ${formatNumber(result.output, locale)} ${toUnit?.symbol || result.toUnit}`;
+  return `${formatNumber(result.input, locale, 2)} ${formatUnitLabel(
+    result.fromUnit,
+  )} → ${formatNumber(result.output, locale, 2)} ${formatUnitLabel(result.toUnit)}`;
 }
 
 export function formatHistoryTimestamp(value: string, locale = "cs-CZ"): string {
@@ -47,13 +44,10 @@ export function formatCurrencyRate(
   locale = "cs-CZ",
 ): string {
   const pairRate = getCurrencyPairRate(fromUnitId, toUnitId, rates);
-  const fromUnit = getUnitById(fromUnitId);
-  const toUnit = getUnitById(toUnitId);
-
-  return `1 ${fromUnit?.symbol || fromUnitId.toUpperCase()} = ${formatNumber(
+  return `1 ${formatUnitLabel(fromUnitId)} = ${formatNumber(
     pairRate,
     locale,
-  )} ${toUnit?.symbol || toUnitId.toUpperCase()}`;
+  )} ${formatUnitLabel(toUnitId)}`;
 }
 
 export function formatHistoryItem(historyItem: HistoryItem, locale = "cs-CZ"): string {
@@ -61,4 +55,14 @@ export function formatHistoryItem(historyItem: HistoryItem, locale = "cs-CZ"): s
     historyItem.createdAt,
     locale,
   )}`;
+}
+
+function formatUnitLabel(unitId: UnitId): string {
+  const unit = getUnitById(unitId);
+
+  if (!unit) {
+    return String(unitId).toUpperCase();
+  }
+
+  return unit.category === "currency" ? String(unitId).toUpperCase() : unit.symbol || unit.id;
 }

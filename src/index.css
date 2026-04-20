@@ -1,12 +1,81 @@
-* {
+:root {
+  --color-primary: #10b981;
+  --color-primary-strong: #0f9a70;
+  --color-primary-soft: #dff6ed;
+  --color-ink-soft: #304252;
+  --color-background: #f4efe8;
+  --color-background-soft: #fcfaf7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8f5f0;
+  --color-text: #1f2937;
+  --color-muted: #6b7280;
+  --color-border: #ddd7ce;
+  --color-border-strong: rgba(113, 96, 79, 0.18);
+  --color-loading: #3b82f6;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --shadow-soft: 0 26px 80px rgba(29, 35, 47, 0.12);
+  --shadow-card: 0 18px 36px rgba(29, 35, 47, 0.08);
+  --radius-panel: 24px;
+  --radius-control: 10px;
+  --font-body: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fa;
-  color: #0f172a;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.16), transparent 0 18%),
+    radial-gradient(circle at 88% 14%, rgba(244, 185, 66, 0.12), transparent 0 16%),
+    radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.06), transparent 0 24%),
+    linear-gradient(180deg, #f7f3ec 0%, #f4efe8 55%, #efe8de 100%);
+  background-attachment: fixed;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  font-family: var(--font-body);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.28);
+  outline-offset: 2px;
 }
 
 #root {

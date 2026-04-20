@@ -1,0 +1,26 @@
+{
+  "name": "All Unit Converter",
+  "short_name": "Converter",
+  "description": "Převodník jednotek – měna, délka, váha, teplota, čas",
+  "id": "/",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "cs-CZ",
+  "background_color": "#f4efe8",
+  "theme_color": "#10b981",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

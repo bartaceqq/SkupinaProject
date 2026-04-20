@@ -5,7 +5,7 @@ export const sampleHistory: HistoryItem[] = [
     id: "1",
     result: {
       input: 100,
-      output: 2454,
+      output: 2490,
       fromUnit: "eur",
       toUnit: "czk",
       category: "currency",
@@ -27,7 +27,7 @@ export const sampleHistory: HistoryItem[] = [
     id: "3",
     result: {
       input: 70,
-      output: 154.3234,
+      output: 154.32,
       fromUnit: "kg",
       toUnit: "lb",
       category: "weight",

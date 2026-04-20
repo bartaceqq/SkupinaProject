@@ -1,5 +1,7 @@
 # Frontend handoff pro Role A
 
+Poznamka: tento dokument vznikl pred dodelanim UI. Aktualni stav repozitare uz obsahuje funkcni MVP aplikaci, ne jen scaffold.
+
 Tento commit nechává `src/components/` a aktuální vizuální scaffold beze změny. Role B je připravená jako logická vrstva, na kterou se můžeš na druhém zařízení napojit.
 
 ## Co je hotové

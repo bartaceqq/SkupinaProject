@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react'
-import { categories, sampleHistory } from '../data'
+import { categories } from '../data'
+import { EMPTY_HISTORY } from '../constants'
 import {
   createHistoryEntry,
   getCurrencyPairRate,
@@ -25,7 +26,7 @@ function createDefaultDraft(categoryId = DEFAULT_CATEGORY) {
 
   return {
     category: categoryId,
-    amount: '1',
+    amount: '100',
     fromUnitId,
     toUnitId,
     isClearHistoryModalOpen: false,
@@ -45,7 +46,7 @@ function sanitizeDraft(value) {
     amount:
       typeof value.amount === 'string' || typeof value.amount === 'number'
         ? String(value.amount)
-        : '1',
+        : '100',
     fromUnitId: isUnitInCategory(value.fromUnitId, category)
       ? value.fromUnitId
       : fallbackPair.fromUnitId,
@@ -68,10 +69,29 @@ function sanitizeDraft(value) {
 
 function sanitizeHistory(items) {
   if (!Array.isArray(items)) {
-    return sampleHistory
+    return EMPTY_HISTORY
   }
 
-  return items.filter((item) => item?.id && item?.result && item?.createdAt)
+  return items.filter((item) => {
+    if (!item || typeof item.id !== 'string' || typeof item.createdAt !== 'string') {
+      return false
+    }
+
+    const result = item.result
+
+    if (!result || !categories.some((category) => category.id === result.category)) {
+      return false
+    }
+
+    if (!Number.isFinite(result.input) || !Number.isFinite(result.output)) {
+      return false
+    }
+
+    return (
+      isUnitInCategory(result.fromUnit, result.category) &&
+      isUnitInCategory(result.toUnit, result.category)
+    )
+  })
 }
 
 function readDraftFromStorage(storageKey) {
@@ -124,11 +144,27 @@ function reducer(state, action) {
         amount: action.amount,
       }
     case 'setFromUnit':
+      if (action.unitId === state.toUnitId) {
+        return {
+          ...state,
+          fromUnitId: action.unitId,
+          toUnitId: state.fromUnitId,
+        }
+      }
+
       return {
         ...state,
         fromUnitId: action.unitId,
       }
     case 'setToUnit':
+      if (action.unitId === state.fromUnitId) {
+        return {
+          ...state,
+          fromUnitId: state.toUnitId,
+          toUnitId: action.unitId,
+        }
+      }
+
       return {
         ...state,
         toUnitId: action.unitId,
@@ -162,12 +198,21 @@ function reducer(state, action) {
 }
 
 function buildStatusMessage({
+  invalidAmount,
   needsCurrencyRates,
   loading,
   error,
   conversionError,
   rateText,
+  source,
 }) {
+  if (invalidAmount) {
+    return {
+      tone: 'error',
+      text: 'Zadejte platné číslo pro převod.',
+    }
+  }
+
   if (conversionError) {
     return {
       tone: 'error',
@@ -193,6 +238,20 @@ function buildStatusMessage({
     }
   }
 
+  if (source === 'local-fallback') {
+    return {
+      tone: 'warning',
+      text: 'API není dostupné, používám vestavěné offline kurzy.',
+    }
+  }
+
+  if (source === 'local-cache') {
+    return {
+      tone: 'warning',
+      text: 'API není dostupné, používám naposledy uložené kurzy.',
+    }
+  }
+
   if (rateText) {
     return {
       tone: 'success',
@@ -208,16 +267,24 @@ export function useConverterApp({
   historyStorageKey = DEFAULT_HISTORY_STORAGE_KEY,
   historyLimit = DEFAULT_HISTORY_LIMIT,
 } = {}) {
-  const [history, setHistory] = useLocalStorage(historyStorageKey, sampleHistory)
+  const [history, setHistory] = useLocalStorage(historyStorageKey, EMPTY_HISTORY)
   const [state, dispatch] = useReducer(reducer, draftStorageKey, readDraftFromStorage)
+  const { amount, category, fromUnitId, toUnitId } = state
 
   useEffect(() => {
-    persistDraft(draftStorageKey, state)
-  }, [draftStorageKey, state.amount, state.category, state.fromUnitId, state.toUnitId])
+    persistDraft(draftStorageKey, { amount, category, fromUnitId, toUnitId })
+  }, [amount, category, draftStorageKey, fromUnitId, toUnitId])
 
-  const availableUnits = getUnitsByCategory(state.category)
-  const numericAmount = parseInputAmount(state.amount)
-  const needsCurrencyRates = state.category === 'currency'
+  const availableUnits = getUnitsByCategory(category)
+  const numericAmount = parseInputAmount(amount)
+  const hasTypedAmount = String(amount ?? '').trim() !== ''
+  const isAmountInvalid = hasTypedAmount && numericAmount === null
+  const amountMessage = !hasTypedAmount
+    ? 'Zadej hodnotu k převodu.'
+    : isAmountInvalid
+      ? 'Zadej platné číslo, například 100 nebo 12,5.'
+      : null
+  const needsCurrencyRates = category === 'currency'
   const currencyRates = useCurrencyRates({
     enabled: needsCurrencyRates,
   })
@@ -229,9 +296,9 @@ export function useConverterApp({
     if (numericAmount !== null) {
       previewResult = convertValue({
         amount: numericAmount,
-        categoryId: state.category,
-        fromUnitId: state.fromUnitId,
-        toUnitId: state.toUnitId,
+        categoryId: category,
+        fromUnitId,
+        toUnitId,
         currencyRates: currencyRates.rates,
       })
     }
@@ -244,8 +311,8 @@ export function useConverterApp({
 
   if (needsCurrencyRates && currencyRates.rates) {
     try {
-      pairRate = getCurrencyPairRate(state.fromUnitId, state.toUnitId, currencyRates.rates)
-      rateText = formatCurrencyRate(state.fromUnitId, state.toUnitId, currencyRates.rates)
+      pairRate = getCurrencyPairRate(fromUnitId, toUnitId, currencyRates.rates)
+      rateText = formatCurrencyRate(fromUnitId, toUnitId, currencyRates.rates)
     } catch {
       pairRate = null
       rateText = null
@@ -253,11 +320,13 @@ export function useConverterApp({
   }
 
   const statusMessage = buildStatusMessage({
+    invalidAmount: isAmountInvalid,
     needsCurrencyRates,
     loading: currencyRates.loading && !currencyRates.rates,
     error: currencyRates.error,
     conversionError,
     rateText,
+    source: currencyRates.source,
   })
 
   const normalizedHistory = limitHistory(sanitizeHistory(history), historyLimit)
@@ -305,11 +374,13 @@ export function useConverterApp({
     statusMessage,
     availableUnits,
     canConvert,
+    isAmountInvalid,
+    amountMessage,
     isClearHistoryModalOpen: state.isClearHistoryModalOpen,
-    category: state.category,
-    amount: state.amount,
-    fromUnitId: state.fromUnitId,
-    toUnitId: state.toUnitId,
+    category,
+    amount,
+    fromUnitId,
+    toUnitId,
     fromUnit: getUnitById(state.fromUnitId),
     toUnit: getUnitById(state.toUnitId),
     setAmount: (amount) => dispatch({ type: 'setAmount', amount }),
