@@ -13,9 +13,6 @@ function CategoryTabs({ categories, activeCategoryId, onChange, panelId }) {
             className={`category-tab${isActive ? ' is-active' : ''}`}
             onClick={() => onChange(category.id)}
           >
-            <span className="category-tab__icon" aria-hidden="true">
-              {category.icon}
-            </span>
             <span>{category.label}</span>
           </button>
         )

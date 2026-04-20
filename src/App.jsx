@@ -20,9 +20,7 @@ function App() {
       <AppLayout>
         <section className="wireframe-card" aria-label="All Unit Converter">
           <PageHeader
-            kicker="Offline-ready converter"
             title="All Unit Converter"
-            subtitle="Měna, délka, váha, teplota a čas v jednom přehledném převodníku."
           />
 
           <div className="wireframe-card__body">

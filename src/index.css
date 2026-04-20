@@ -1,25 +1,25 @@
 :root {
   --color-primary: #10b981;
-  --color-primary-strong: #0f9a70;
-  --color-primary-soft: #dff6ed;
-  --color-ink-soft: #304252;
-  --color-background: #f4efe8;
-  --color-background-soft: #fcfaf7;
+  --color-primary-strong: #0f8f66;
+  --color-primary-soft: #e8f8f2;
+  --color-ink-soft: #5b6472;
+  --color-background: #f5f7fa;
+  --color-background-soft: #fafbfc;
   --color-surface: #ffffff;
-  --color-surface-muted: #f8f5f0;
+  --color-surface-muted: #f7f8fb;
   --color-text: #1f2937;
   --color-muted: #6b7280;
-  --color-border: #ddd7ce;
-  --color-border-strong: rgba(113, 96, 79, 0.18);
+  --color-border: #d8dde6;
+  --color-border-strong: rgba(107, 114, 128, 0.26);
   --color-loading: #3b82f6;
   --color-error: #ef4444;
   --color-success: #22c55e;
-  --shadow-soft: 0 26px 80px rgba(29, 35, 47, 0.12);
-  --shadow-card: 0 18px 36px rgba(29, 35, 47, 0.08);
-  --radius-panel: 24px;
+  --shadow-soft: 0 16px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 10px 24px rgba(15, 23, 42, 0.06);
+  --radius-panel: 18px;
   --radius-control: 10px;
-  --font-body: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
-  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-body: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 *,
@@ -38,12 +38,8 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: var(--color-text);
-  background:
-    radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.16), transparent 0 18%),
-    radial-gradient(circle at 88% 14%, rgba(244, 185, 66, 0.12), transparent 0 16%),
-    radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.06), transparent 0 24%),
-    linear-gradient(180deg, #f7f3ec 0%, #f4efe8 55%, #efe8de 100%);
-  background-attachment: fixed;
+  line-height: 1.5;
+  background: linear-gradient(180deg, #f8fafc 0%, #f3f6fa 100%);
 }
 
 body,
