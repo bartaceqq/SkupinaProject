@@ -70,7 +70,10 @@ function App() {
               </div>
 
               <div className="converter-panel__actions">
-                <ConvertButton disabled={!app.canConvert} onClick={app.submitConversion} />
+                <ConvertButton
+                  disabled={app.isConvertActionDisabled}
+                  onClick={app.submitConversion}
+                />
               </div>
             </section>
 
@@ -100,10 +103,10 @@ function App() {
 
       <ConfirmModal
         open={app.isClearHistoryModalOpen}
-        title="Vymazat historii?"
-        description="Akce odstraní všechny uložené převody z historie aplikace."
-        confirmLabel="Potvrdit"
-        cancelLabel="Zrušit"
+        title="Opravdu vymazat vše?"
+        description="Tímto smažete celou historii převodů."
+        confirmLabel="Ano, vymazat"
+        cancelLabel="Zpět"
         onConfirm={app.clearHistory}
         onCancel={app.closeClearHistoryModal}
       />

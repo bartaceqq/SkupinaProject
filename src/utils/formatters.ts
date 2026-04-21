@@ -1,10 +1,12 @@
 import type { ConversionResult, HistoryItem, UnitId } from "../types";
 import { getCurrencyPairRate, getUnitById } from "./converters";
 
+const MAX_CONVERSION_FRACTION_DIGITS = 6;
+
 export function formatNumber(
   value: number,
   locale = "cs-CZ",
-  maximumFractionDigits = 4,
+  maximumFractionDigits = 6,
 ): string {
   if (!Number.isFinite(value)) {
     return "—";
@@ -19,9 +21,17 @@ export function formatConversionSummary(
   result: ConversionResult,
   locale = "cs-CZ",
 ): string {
-  return `${formatNumber(result.input, locale, 2)} ${formatUnitLabel(
+  return `${formatNumber(
+    result.input,
+    locale,
+    MAX_CONVERSION_FRACTION_DIGITS,
+  )} ${formatUnitLabel(
     result.fromUnit,
-  )} → ${formatNumber(result.output, locale, 2)} ${formatUnitLabel(result.toUnit)}`;
+  )} → ${formatNumber(
+    result.output,
+    locale,
+    MAX_CONVERSION_FRACTION_DIGITS,
+  )} ${formatUnitLabel(result.toUnit)}`;
 }
 
 export function formatHistoryTimestamp(value: string, locale = "cs-CZ"): string {

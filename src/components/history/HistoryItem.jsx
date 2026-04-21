@@ -10,9 +10,6 @@ function HistoryItem({ item, onApply }) {
         title={formatHistoryTimestamp(item.createdAt)}
       >
         <span className="history-item__summary">{formatConversionSummary(item.result)}</span>
-        <span className="history-item__chevron" aria-hidden="true">
-          ▾
-        </span>
       </button>
     </li>
   )

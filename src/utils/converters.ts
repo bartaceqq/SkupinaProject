@@ -29,7 +29,7 @@ const defaultUnitPairs: Record<CategoryId, [UnitId, UnitId]> = {
 };
 
 function normalizeNumber(value: number): number {
-  const roundedValue = Number.parseFloat(value.toFixed(10));
+  const roundedValue = Number.parseFloat(value.toPrecision(15));
   return Object.is(roundedValue, -0) ? 0 : roundedValue;
 }
 

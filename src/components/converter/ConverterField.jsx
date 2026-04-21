@@ -24,7 +24,7 @@ function ConverterField({
     ? value === '' || value === null || value === undefined
       ? ''
       : typeof value === 'number'
-        ? formatNumber(value, 'cs-CZ', 2)
+        ? formatNumber(value, 'cs-CZ', 6)
         : value
     : value ?? ''
   const selectedUnit = units.find((unit) => unit.id === selectedUnitId) ?? null

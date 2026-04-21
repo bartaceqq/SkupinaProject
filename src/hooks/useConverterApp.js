@@ -19,6 +19,7 @@ import { useLocalStorage } from './useLocalStorage'
 const DEFAULT_DRAFT_STORAGE_KEY = 'unit-converter-draft'
 const DEFAULT_HISTORY_STORAGE_KEY = 'unit-converter-history'
 const DEFAULT_HISTORY_LIMIT = 10
+const MAX_AMOUNT_DIGITS = 15
 const DEFAULT_CATEGORY = categories[0]?.id ?? 'currency'
 
 function createDefaultDraft(categoryId = DEFAULT_CATEGORY) {
@@ -30,7 +31,55 @@ function createDefaultDraft(categoryId = DEFAULT_CATEGORY) {
     fromUnitId,
     toUnitId,
     isClearHistoryModalOpen: false,
+    hasTriedConversion: false,
   }
+}
+
+function sanitizeAmountInput(value, categoryId) {
+  if (value === null || value === undefined) {
+    return ''
+  }
+
+  const normalizedValue = String(value)
+
+  if (normalizedValue.trim() === '') {
+    return ''
+  }
+
+  const allowNegative = categoryId === 'temperature'
+  let sanitizedAmount = ''
+  let hasDecimalSeparator = false
+  let hasSign = false
+  let digitCount = 0
+
+  for (const character of normalizedValue) {
+    if (character >= '0' && character <= '9') {
+      if (digitCount >= MAX_AMOUNT_DIGITS) {
+        continue
+      }
+
+      sanitizedAmount += character
+      digitCount += 1
+      continue
+    }
+
+    if ((character === '.' || character === ',') && !hasDecimalSeparator) {
+      if (sanitizedAmount === '' || sanitizedAmount === '-') {
+        sanitizedAmount += '0'
+      }
+
+      sanitizedAmount += '.'
+      hasDecimalSeparator = true
+      continue
+    }
+
+    if (character === '-' && allowNegative && !hasSign && sanitizedAmount === '') {
+      sanitizedAmount = '-'
+      hasSign = true
+    }
+  }
+
+  return sanitizedAmount
 }
 
 function sanitizeDraft(value) {
@@ -41,12 +90,13 @@ function sanitizeDraft(value) {
   const categoryExists = categories.some((category) => category.id === value.category)
   const category = categoryExists ? value.category : DEFAULT_CATEGORY
   const fallbackPair = getDefaultUnitPair(category)
+  const amountValue =
+    typeof value.amount === 'string' || typeof value.amount === 'number'
+      ? String(value.amount)
+      : '100'
   const nextDraft = {
     category,
-    amount:
-      typeof value.amount === 'string' || typeof value.amount === 'number'
-        ? String(value.amount)
-        : '100',
+    amount: sanitizeAmountInput(amountValue, category),
     fromUnitId: isUnitInCategory(value.fromUnitId, category)
       ? value.fromUnitId
       : fallbackPair.fromUnitId,
@@ -54,6 +104,7 @@ function sanitizeDraft(value) {
       ? value.toUnitId
       : fallbackPair.toUnitId,
     isClearHistoryModalOpen: false,
+    hasTriedConversion: false,
   }
 
   if (nextDraft.fromUnitId === nextDraft.toUnitId) {
@@ -134,14 +185,17 @@ function reducer(state, action) {
       return {
         ...state,
         category: action.categoryId,
+        amount: sanitizeAmountInput(state.amount, action.categoryId),
         fromUnitId: nextPair.fromUnitId,
         toUnitId: nextPair.toUnitId,
+        hasTriedConversion: false,
       }
     }
     case 'setAmount':
       return {
         ...state,
-        amount: action.amount,
+        amount: sanitizeAmountInput(action.amount, state.category),
+        hasTriedConversion: false,
       }
     case 'setFromUnit':
       if (action.unitId === state.toUnitId) {
@@ -149,12 +203,14 @@ function reducer(state, action) {
           ...state,
           fromUnitId: action.unitId,
           toUnitId: state.fromUnitId,
+          hasTriedConversion: false,
         }
       }
 
       return {
         ...state,
         fromUnitId: action.unitId,
+        hasTriedConversion: false,
       }
     case 'setToUnit':
       if (action.unitId === state.fromUnitId) {
@@ -162,26 +218,37 @@ function reducer(state, action) {
           ...state,
           fromUnitId: state.toUnitId,
           toUnitId: action.unitId,
+          hasTriedConversion: false,
         }
       }
 
       return {
         ...state,
         toUnitId: action.unitId,
+        hasTriedConversion: false,
       }
     case 'swapUnits':
       return {
         ...state,
         fromUnitId: state.toUnitId,
         toUnitId: state.fromUnitId,
+        hasTriedConversion: false,
       }
     case 'applyHistoryItem':
-      return sanitizeDraft({
+      return {
+        ...sanitizeDraft({
         category: action.historyItem.result.category,
         amount: String(action.historyItem.result.input),
         fromUnitId: action.historyItem.result.fromUnit,
         toUnitId: action.historyItem.result.toUnit,
-      })
+        }),
+        hasTriedConversion: false,
+      }
+    case 'markConversionAttempt':
+      return {
+        ...state,
+        hasTriedConversion: true,
+      }
     case 'openClearHistoryModal':
       return {
         ...state,
@@ -278,7 +345,10 @@ export function useConverterApp({
   const availableUnits = getUnitsByCategory(category)
   const numericAmount = parseInputAmount(amount)
   const hasTypedAmount = String(amount ?? '').trim() !== ''
-  const isAmountInvalid = hasTypedAmount && numericAmount === null
+  const isTemperatureMinusOnly = category === 'temperature' && amount === '-'
+  const isRawAmountInvalid = hasTypedAmount && numericAmount === null
+  const shouldSuppressInvalid = isTemperatureMinusOnly && !state.hasTriedConversion
+  const isAmountInvalid = isRawAmountInvalid && !shouldSuppressInvalid
   const amountMessage = !hasTypedAmount
     ? 'Zadej hodnotu k převodu.'
     : isAmountInvalid
@@ -334,8 +404,11 @@ export function useConverterApp({
     previewResult !== null &&
     conversionError === null &&
     (!needsCurrencyRates || Boolean(currencyRates.rates))
+  const isConvertActionDisabled = !hasTypedAmount || (needsCurrencyRates && !currencyRates.rates)
 
   const submitConversion = () => {
+    dispatch({ type: 'markConversionAttempt' })
+
     if (!previewResult) {
       return null
     }
@@ -374,6 +447,7 @@ export function useConverterApp({
     statusMessage,
     availableUnits,
     canConvert,
+    isConvertActionDisabled,
     isAmountInvalid,
     amountMessage,
     isClearHistoryModalOpen: state.isClearHistoryModalOpen,

@@ -325,6 +325,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  justify-self: center;
 }
 
 .swap-button {
@@ -835,12 +837,16 @@
 
   .converter-grid {
     grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr);
-    align-items: center;
+    align-items: start;
+  }
+
+  .converter-grid > .converter-field {
+    align-self: start;
   }
 
   .swap-row {
-    min-height: 100%;
-    padding-top: 24px;
+    min-height: 0;
+    padding-top: 0;
   }
 
   .swap-button__icon {
@@ -1226,12 +1232,16 @@
 
   .converter-grid {
     grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr);
-    align-items: center;
+    align-items: start;
+  }
+
+  .converter-grid > .converter-field {
+    align-self: start;
   }
 
   .swap-row {
-    min-height: 100%;
-    padding-top: 20px;
+    min-height: 0;
+    padding-top: 0;
   }
 
   .converter-field__meta {
@@ -1254,4 +1264,101 @@
     flex-direction: column;
     align-items: stretch;
   }
+}
+
+/* Requested behavior and wireframe cleanup */
+.swap-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.swap-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
+}
+
+.swap-button__icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.swap-button__icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.swap-button.is-rotated .swap-button__icon {
+  transform: rotate(270deg);
+}
+
+@media (min-width: 768px) {
+  .swap-row {
+    align-self: start;
+    padding-top: 28px;
+  }
+
+  .swap-button__icon {
+    transform: rotate(0deg);
+  }
+
+  .swap-button.is-rotated .swap-button__icon {
+    transform: rotate(180deg);
+  }
+}
+
+.history-item__apply {
+  justify-content: flex-start;
+}
+
+.history-item__chevron {
+  display: none;
+}
+
+.modal-overlay {
+  background: rgba(15, 23, 42, 0.36);
+  backdrop-filter: none;
+  animation: none;
+}
+
+.modal-card {
+  width: min(100%, 360px);
+  padding: 16px;
+  border: 1px solid #d7dde5;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  animation: none;
+}
+
+.modal-card__description {
+  margin-top: 8px;
+  color: #4b5563;
+}
+
+.modal-card__actions {
+  justify-content: flex-end;
+}
+
+.button-danger {
+  min-height: 34px;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  background: #ef4444;
+  box-shadow: none;
+}
+
+.button-danger:hover {
+  background: #dc2626;
+  transform: none;
 }

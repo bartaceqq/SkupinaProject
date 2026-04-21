@@ -1,42 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 function SwapButton({ onClick }) {
-  const [isAnimating, setIsAnimating] = useState(false)
-  const timeoutRef = useRef(null)
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        window.clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [])
+  const [isRotated, setIsRotated] = useState(false)
 
   const handleClick = () => {
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current)
-    }
-
-    setIsAnimating(false)
-    window.requestAnimationFrame(() => {
-      setIsAnimating(true)
-      timeoutRef.current = window.setTimeout(() => {
-        setIsAnimating(false)
-      }, 320)
-    })
-
+    setIsRotated((previousState) => !previousState)
     onClick?.()
   }
 
   return (
     <button
       type="button"
-      className={`swap-button${isAnimating ? ' is-swapped' : ''}`}
+      className={`swap-button${isRotated ? ' is-rotated' : ''}`}
       onClick={handleClick}
       aria-label="Prohodit jednotky"
     >
       <span className="swap-button__icon" aria-hidden="true">
-        →
+        <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+          <path d="M4 12h14" />
+          <path d="M14 7l5 5-5 5" />
+        </svg>
       </span>
     </button>
   )
